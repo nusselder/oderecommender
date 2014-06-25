@@ -1,0 +1,6 @@
+# Ignore files/dirs created during ./install.sh
+load_node_path.sh
+node_modules
+programs
+redis.log
+dump.rdb
