@@ -20,23 +20,6 @@ router.get('/', function(req, res) {
 });
 
 
-router.get('/old/:id', function(req, res) {
-
-  var recommendations = [];
-
-  // Dummy output, just a list of everything.
-  req.redis_client.hgetall('place_counts', function(err, objs){
-  //req.redis_client.zrange('place_sort', 0, 4, 'withscores', function(err, objs){
-    for (var k in objs) {
-      recommendations.push({'place_id': k, 'value': parseFloat(objs[k])});
-      }
-    // redis_get does not finish before return, so within this function..
-    res.json( {'status': 'accept', 'msg': 'Dummy recommendation', 'places': recommendations} );
-  });
-
-});
-
-
 router.get('/:id', function(req, res) {
 
   // The numbers of days to consider.
@@ -48,11 +31,8 @@ router.get('/:id', function(req, res) {
   // The place for which to get recommendations.
   var place_id = req.params.id;
 
-  // ? keep track of rec.s here
-  var recommendations = [];
-
   // ? log full request.
-  console.log('Request: '+place_id+' : '+timestamp+' : -'+days_back);
+  //console.log('Request: '+place_id+' : '+timestamp+' : -'+days_back);
 
   // Generate the list of dates.
   var dates = [];
@@ -75,33 +55,43 @@ router.get('/:id', function(req, res) {
     }
   }
 
-  console.log('Dates: '+dates);
-  console.log('Co-occurence keys: '+coocurrence_keys);
+  //console.log('Dates: '+dates);
+  //console.log('Co-occurence keys: '+coocurrence_keys);
 
 
   // Get the list of all places relevant for the given timestamp and place_id.
   req.redis_client.sunion(coocurrence_keys, function(err, timestamp_place_pairs){
 
-    console.log('Timestamped place-pairs: '+timestamp_place_pairs);
+    //console.log('Timestamped place-pairs: '+timestamp_place_pairs);
 
-    // Request, for each of these timestamp/place_pair combinations, the counts.
-    place_counts = {};
     req.redis_client.hmget('timestamp:placepairs', timestamp_place_pairs, function(err, data){
+
+      // Request, for each of these timestamp/place_pair combinations, the counts.
+      place_counts = {};
+
       for(var i=0; i < timestamp_place_pairs.length; i++) {
+
         // Extract the recommended place_id from the key-string and combine it with its count-value.
         // TODO: getting ids by splitting on keys is not pretty, and will go wrong if
         // if the ids contain a ':'. We'll allow it in the first version.
         var rec_place_id = timestamp_place_pairs[i].split(':')[2];
         var count = parseInt(data[i]);
+
         if (rec_place_id in place_counts ) place_counts[rec_place_id] += count;
         else place_counts[rec_place_id] = count;
-
       }
 
-      console.log(place_counts);
-      // todo, make place_counts now a sorted list..
+      //console.log(place_counts);
 
-      res.json( {'status': 'accept', 'msg': 'Dummy recommendation', 'places': place_counts} );
+      // TODO: filter to only the "top 10"
+      places = [];
+      Object.keys(place_counts).forEach(function(place_id){
+        places.push( {"place_id": place_id, "value": place_counts[place_id]} );
+      });
+
+      //console.log(places);
+
+      res.json( {'status': 'accept', 'msg': 'all results (i.e. no top 10), list unordered', 'places': places} );
 
     });
 
@@ -111,3 +101,4 @@ router.get('/:id', function(req, res) {
 
 
 module.exports = router;
+
