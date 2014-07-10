@@ -25,8 +25,8 @@ router.get('/:id', function(req, res) {
   // The numbers of days to consider.
   var days_back = 3;
 
-  // The current time/date
-  var timestamp = '2014-03-03T07:34:12Z';
+  // The current time/date (simulated).
+  var timestamp = '2014-07-03T07:34:12Z';
 
   // The place for which to get recommendations.
   var place_id = req.params.id;
