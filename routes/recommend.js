@@ -31,7 +31,6 @@ router.get('/:id', function(req, res) {
   // The place for which to get recommendations.
   var place_id = req.params.id;
 
-  // ? log full request.
   //console.log('Request: '+place_id+' : '+timestamp+' : -'+days_back);
 
   // Generate the list of dates.
@@ -47,7 +46,7 @@ router.get('/:id', function(req, res) {
   // but for each of a set of venues (i.e. all places a *user*
   // visited) allows for personalised recommendation.
   var coocurrence_keys = [];
-  var place_ids = [place_id]; // Example for future personalisation.
+  var place_ids = [place_id];
   // var place_ids = [place_id, 'faux venue id'];
   for(var i=0; i<dates.length; i++){
     for(var j=0; j<place_ids.length; j++) {
@@ -83,20 +82,27 @@ router.get('/:id', function(req, res) {
 
       //console.log(place_counts);
 
-      // TODO: filter to only the "top 10"
-      places = [];
-      Object.keys(place_counts).forEach(function(place_id){
-        places.push( {"place_id": place_id, "value": place_counts[place_id]} );
+      // Create list of place objects.
+      var places = Object.keys(place_counts).map(function(place_id){
+        return {"place_id": place_id, "value": place_counts[place_id]};
       });
+
+      // Sort by count, descending (as in the first element has the largest value).
+      places.sort(function(p1,p2){return p2.value - p1.value});
 
       //console.log(places);
 
-      res.json( {'status': 'accept', 'msg': 'all results (i.e. no top 10), list unordered', 'places': places} );
+      // TODO: perhaps, implement "pagination" on the slice
+      res.json( {'status': 'accept',
+                 'msg': 'top ten results, descending',
+                 'places': places.slice(0,10)} );
 
     });
 
+  // /req.redis_client(
   });
 
+// /router.get(:id
 });
 
 
