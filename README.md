@@ -13,7 +13,17 @@ See [http://ode.politicalmashup.nl/rec/](http://ode.politicalmashup.nl/rec/) for
 ## Setup node/redis
 
 To install software and start server on port 8004, use `./install.sh`.
-Then add some dummy data with `./test_dummy.sh`.
+To test the server response, use `./test_response.sh`.
+
+To add a small set of dummy data (88K), use:
+
+    gunzip -c data_sample.csv.gz > data_sample.csv
+    ./post_data_sample.sh
+
+To add a large set of dummy data (32MB), use:
+
+    wget --no-check-certificate "https://www.dropbox.com/s/8or7yiua66c8r56/AmsterdamCardSimulatedData.csv?dl=1" -O data_sample.csv
+    ./post_data_sample.sh
 
 Tested on CentOS 6.5 and Linux Mint 15 Olivia. It probably requires some default built-tools etc.
 

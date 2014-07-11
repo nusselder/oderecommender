@@ -33,5 +33,8 @@ npm install
 #npm start
 forever start bin/www
 
-# To stop node.js `source load_node_path.sh` and the `forever stop all`.
-# To stop redis server `ps aux | grep redis` and kill the server process.
+echo "To stop node.js `source load_node_path.sh` and the `forever stop all`."
+echo "To stop redis server `ps aux | grep redis` and kill the server process."
+echo "A database dump of the redis server is saved periodicallly to:"
+echo "$start_path/dump.rdb"
+
