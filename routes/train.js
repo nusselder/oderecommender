@@ -75,7 +75,7 @@ router.post('/', function(req, res) {
     });
 
     // Update user with this newly visited place.
-    req.redis_client.lpush('u:'+item.user_id, item.place_id, req.redis_print);
+    req.redis_client.lpush('u:'+item.user_id, item.place_id);
 
     // ? log user list after update..
     //req.redis_client.lrange('u:'+item.user_id, 0, 9, function(err, uu){console.log('-'+item.user_id+'-: '+uu);});

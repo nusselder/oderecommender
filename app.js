@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Before routing, add a link to the database (redis in this case),
 // so we have this handy. It won't be to heavy an app anyway...?
-app.use(function(req,res,next){req.redis_client=redis_client;req.redis_print=redis_client.print;next();});
+app.use(function(req,res,next){req.redis_client=redis_client;next();});
 
 app.use('/', routes);
 app.use('/train', train);
