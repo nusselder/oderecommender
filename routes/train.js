@@ -46,6 +46,10 @@ router.post('/', function(req, res) {
     // twice. There is no applicable reason not to allow this.
 
 
+    // Keep count of the total visits per place for normalisation.
+    req.redis_client.hincrby('itemplacecount', item.place_id, 1);
+
+
     // Update counts for the previously visited place_id's of the user.
     req.redis_client.lrange('u:'+item.user_id, 0, 9, function(err, prev_places){
 
@@ -70,6 +74,10 @@ router.post('/', function(req, res) {
         // (i.e. hash key management?)
         req.redis_client.sadd(timestamp_place, timestamp_place_pair);
         req.redis_client.sadd(reversed_timestamp_place, reversed_timestamp_place_pair);
+
+        // Increase a count of each of both places of each pair.
+        req.redis_client.hincrby('place_visits', item.place_id, 1);
+        req.redis_client.hincrby('place_visits', prev_place_id, 1);
         
       });
     });
