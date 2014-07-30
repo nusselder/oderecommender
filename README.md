@@ -58,7 +58,7 @@ Recommendations are supplied based on a `place_id` corresponding to the initial 
 The recommendations are returned as an ordered list of `place_id` `value` tuples, with the first element the highest ranked.
 The `value` determines the order/rank, but no guarantee about its absolute interpretation is given.
 
-GET url `http://oderec.politicalmashup.nl/recommend/place_id`, will present a JSON object:
+GET url `http://HOST:PORT/recommend/place_id`, will present a JSON object:
 
     {"status": "accept/error",
      "msg": "possible error message",
