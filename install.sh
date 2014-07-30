@@ -19,6 +19,7 @@ make
 # Start redis server, in start_path (dump.rdb will be there).
 # Default port is 6379.
 cd $start_path
+mkdir -p logs
 ./programs/redis-2.8.12/src/redis-server 2>&1 >> logs/redis.log &
 
 # Add node/bin to path, and set port environment (read during `npm start`/`forever start bin/www`).
@@ -34,8 +35,9 @@ npm install
 #npm start
 forever start bin/www
 
-echo "To stop node.js `source load_node_path.sh` and the `forever stop all`."
-echo "To stop redis server `ps aux | grep redis` and kill the server process."
-echo "A database dump of the redis server is saved periodicallly to:"
+echo '*** Done ***'
+echo 'To stop node.js `source load_node_path.sh` and then `forever stop all`.'
+echo 'To stop redis server `ps aux | grep redis` and kill the server process.'
+echo 'A database dump of the redis server is saved periodicallly to:'
 echo "$start_path/dump.rdb"
 
