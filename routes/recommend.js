@@ -116,7 +116,8 @@ router.get('/:id', function(req, res) {
 
         // TODO: perhaps, implement "pagination" on the slice
         var result = {'status': 'accept',
-                      'msg': 'top ten results, descending'}
+                      'msg': 'top ten results, descending',
+                      'place_id': place_id}
 
         if (req.query.names !== undefined)
           result.name = pretty_names[place_id];
