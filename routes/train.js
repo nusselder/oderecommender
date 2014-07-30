@@ -7,6 +7,9 @@ var router = express.Router();
 // Link to the database is set in app.js. Requests will *always*
 // involve the database, so yay for simplicity.
 
+// Ugly way to disable training for 'production' server.
+var disable_training = false;
+
 router.post('/', function(req, res) {
 
   var error = function(msg) { res.send({"status": "error","msg": msg}); }
@@ -27,6 +30,7 @@ router.post('/', function(req, res) {
   else if (!item.place_id) error("No item.place_id found.");
   else if (!item.timestamp) error("No item.timestamp found.");
   else if (timestamp === undefined) error("Unparseable item.timestamp supplied.");
+  else if (disable_training) error("Training disabled.");
 
   // Everything fine!
   else {
