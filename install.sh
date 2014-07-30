@@ -17,12 +17,13 @@ cd redis-2.8.12
 make
 
 # Start redis server, in start_path (dump.rdb will be there).
+# Default port is 6379.
 cd $start_path
-./programs/redis-2.8.12/src/redis-server 2>&1 >> redis.log &
+./programs/redis-2.8.12/src/redis-server 2>&1 >> logs/redis.log &
 
 # Add node/bin to path, and set port environment (read during `npm start`/`forever start bin/www`).
 echo "export PATH=$PATH:$start_path/programs/node-v0.10.29-linux-x64/bin/" > load_node_path.sh
-echo "export PORT=8004" >> load_node_path.sh
+echo "export PORT=8005" >> load_node_path.sh
 . load_node_path.sh
 
 # Install dependencies.

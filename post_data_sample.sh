@@ -2,7 +2,7 @@
 # Add dummy data to the database.
 
 # Set port same as during install.
-PORT=8004
+PORT=8005
 
 # Assumes data_sample.csv as mentioned in README.md
 DATA_FILE="data_sample.csv"

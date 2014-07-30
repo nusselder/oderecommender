@@ -2,7 +2,7 @@
 # Test rest interface with curl. Echo output for copy-paste to README.md
 
 # Set port same as during install.
-PORT=8004
+PORT=8005
 
 function curl_post_train {
   echo -e "$1:\n"

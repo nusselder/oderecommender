@@ -12,7 +12,7 @@ See [http://ode.politicalmashup.nl/rec/](http://ode.politicalmashup.nl/rec/) for
 
 ## Setup node/redis
 
-To install software and start server on port 8004, use `./install.sh`.
+To install software and start server on port 8005, use `./install.sh`.
 To test the server response, use `./test_response.sh`.
 
 To add a small set of dummy data (88K), use:
