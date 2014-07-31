@@ -86,27 +86,29 @@ router.get('/:id', function(req, res) {
       // for the generated three-day static data sample.
       req.redis_client.hgetall('place_visits', function(err, place_visits){
 
-        // Create list of place objects, either with normalised or popular scores.
-        var places, value, ret;
-        places = Object.keys(place_counts).map(function(place_id){
+        var places = [];
 
-          // "popular" recommendation
-          value = place_counts[place_id];
+        if (req.query.normalised === undefined)
+          // Popular vote.
+          places = normalise.none(place_counts);
 
-          // "normalised" recomendation (with the total visit count)
-          if (req.query.normalised !== undefined)
-            value = value / place_visits[place_id];
+        else if (req.query.normalised === "count")
+          // Available for comparison, "raw" normalisation.
+          places = normalise.visits(place_counts, place_visits);
 
-          // Create place object that can be in the result list.
-          ret = {"place_id": place_id, "value": value};
-          if (req.query.names !== undefined)
-            ret.name = pretty_names[place_id];
+        else {
+          // Normalise top X popular and rerank.
+          var top_x = parseInt(req.query.normalised) || 25;
+          places = normalise.rerank(place_counts, place_visits, top_x);
+        }
 
-          return ret;
-        });
 
-        // Sort by count, descending (as in the first element has the largest value).
-        places.sort(function(p1,p2){return p2.value - p1.value});
+        // Add venue names.
+        if (req.query.names !== undefined)
+          places = places.map(function(item){
+            item.name = pretty_names[item.place_id];
+            return item
+          });
 
         //console.log(places);
 
@@ -135,6 +137,73 @@ router.get('/:id', function(req, res) {
 
 // /router.get(:id
 });
+
+
+// Normalisation methods.
+// Arguments:
+// place_counts: count of each candidate place.
+// place_visits: total place visits (for normalisation).
+// top_x: rerank top X popular vote.
+var normalise = {
+
+
+  // Don't do normalisation, rank based on raw visit count ("popular vote").
+  none: function(place_counts) {
+
+    // Create list of place objects with popular count.
+    var places = Object.keys(place_counts).map(function(place_id){
+      return {"place_id": place_id,
+              "value": place_counts[place_id]};
+    });
+
+    // Sort by count, descending (as in the first element has the largest value).
+    places.sort(function(p1,p2){return p2.value - p1.value});
+
+    return places;
+  },
+
+
+  // Normalise by total number of visits.
+  visits: function(place_counts, place_visits) {
+
+    // Create list of place objects with normalised count.
+    var places = Object.keys(place_counts).map(function(place_id){
+      return {"place_id": place_id,
+              "value": place_counts[place_id] / place_visits[place_id]};
+    });
+
+    // Sort by count, descending (as in the first element has the largest value).
+    places.sort(function(p1,p2){return p2.value - p1.value});
+
+    return places;
+  },
+
+
+  // Take top X popular vote, and rerank by normalised number of visits.
+  rerank: function(place_counts, place_visits, top_x) {
+
+    // Get the popular vote.
+    var places = normalise.none(place_counts);
+
+    // Get the top X.
+    places = places.slice(0,top_x);
+
+    // Update values with normalised values.
+    places = places.map(function(item){
+      return {"place_id": item.place_id,
+              "value": item.value / place_visits[item.place_id]};
+    });
+
+    // Sort by count, descending (as in the first element has the largest value).
+    places.sort(function(p1,p2){return p2.value - p1.value});
+
+    return places;
+  },
+
+
+// /var normalisation =
+};
+
 
 
 // A mapping of venue ids to names, copied as is from csv (including encoding errors).
