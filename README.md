@@ -74,7 +74,10 @@ Three additional arguments can be supplied to the GET request: `?normalised&name
 
    * `all`: Instead of the default first **10** recommendations, reply with **all** venues in order.
    * `names`: Add names to the reply, next to the ids.
-   * `normalised`: Normalise the values with respect to the total number of visits per venue.
+   * `normalised`: Rerank the results with normalised values, with respect to the total number of visits per venue.
+      * `=count`: by raw count.
+      * `=`: rerank only the top 25 popular vote.
+      * `=[X]`: rerank the top [X] popular vote.
 
 
 **draft (not implemented)**: The recommender system assumes a time component by expecting the current time.
